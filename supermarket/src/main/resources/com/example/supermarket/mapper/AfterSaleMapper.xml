@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.supermarket.mapper.AfterSaleMapper">
+<select id="getAllAfterSale" resultMap="afterSaleMapper">
+    select distinct a.as_id, a.dd_id, a.xd_date, a.fk_date, a.fh_date, a.sh_date, a.sq_date, a.jc_date,
+           a.th_date, a.fin_date, a.as_type, a.as_status, a.as_reason, a.as_explain, i.dd_num,
+           p.sp_price, c.gk_name, s.md_name, p.sp_name, p.sp_img
+    from aftersale a, indent i, customer c, product p, shopproduct sp, shop s
+    where a.dd_id = i.dd_id
+      and i.gk_id = c.gk_id
+      and i.sp_id = p.sp_id
+      and p.sp_id = sp.sp_id
+      and sp.md_id = s.md_id
+      and a.isdelete = 0
+      and a.as_type is not null
+      and a.as_status is not null
+    <if test="afId!=null and afId!=''">
+        and a.af_id like '%' #{afId} '%'
+    </if>
+    <if test="ddId!=null and ddId!=''">
+        and a.dd_id like '%' #{ddId} '%'
+    </if>
+    <if test="asType!=null and asType!=''">
+        and a.as_type like '%' #{asType} '%'
+    </if>
+    <if test="asStatus!=null and asStatus!=''">
+        and a.as_status like '%' #{asStatus} '%'
+    </if>
+    <if test="mdName!=null and mdName!=''">
+        and s.md_name = #{mdName}
+    </if>
+    <if test="from!=null">
+        and i.dd_ordertime >= #{from}
+    </if>
+    <if test="to!=null">
+        and i.dd_ordertime &lt;= #{to}
+    </if>
+</select>
+    <resultMap id="afterSaleMapper" type="com.example.supermarket.entity.vo.AfterSaleVO">
+        <id column="dd_id" property="ddId"></id>
+        <id column="as_id" property="asId"></id>
+        <result column="md_name" property="mdName"></result>
+        <result column="sp_name" property="spName"></result>
+        <result column="sp_img" property="spImg"></result>
+        <result column="sp_price" property="spPrice"></result>
+        <result column="dd_num" property="ddNum"></result>
+        <result column="gk_name" property="gkName"></result>
+        <result column="as_type" property="asType"></result>
+        <result column="as_status" property="asStatus"></result>
+        <result column="xd_date" property="xdDate"></result>
+        <result column="fk_date" property="fkDate"></result>
+        <result column="fh_date" property="fhDate"></result>
+        <result column="sh_date" property="shDate"></result>
+        <result column="sq_date" property="sqDate"></result>
+        <result column="jc_date" property="jcDate"></result>
+        <result column="th_date" property="thDate"></result>
+        <result column="fin_date" property="finDate"></result>
+        <result column="as_reason" property="asReason"></result>
+        <result column="as_explain" property="asExplain"></result>
+    </resultMap>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.supermarket.mapper.StoreMapper">
+    <resultMap id="StoreMap" type="StoreVO">
+
+
+        <result column="cg_unit" property="cgUnit"></result>
+        <result column="cg_count" property="cgCount"></result>
+
+        <association property="cargo" column="cg_id" select="getCargo"></association>
+        <association property="wareHouse" column="wh_id" select="getWareHouse"></association>
+    </resultMap>
+    <select id="getStore" resultMap="StoreMap">
+        select * from store
+
+        <where>
+            isdelete=0
+            <if test="cgId!=null and cgId!=0 ">
+                and cg_id=#{cgId}
+            </if>
+            <if test="whId!=null and whId!=0 ">
+                and wh_id=#{whId}
+            </if>
+
+
+
+
+
+        </where>
+    </select>
+    <select id="getCargo" resultType="Cargo">
+        select  * from cargo where cargo_id=#{cgId}
+    </select>
+    <select id="getWareHouse" resultType="WareHouse">
+        select  * from warehouse where wh_id=#{whId}
+    </select>
+</mapper>

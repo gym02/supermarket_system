@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.supermarket.mapper.ShopProductMapper">
+    <insert id="add">
+        insert into shopproduct(md_id, sp_id, putno, putdate,status, isdelete)
+        values (#{mdId}, #{spId}, #{putNo}, #{putDate},1, 0)
+    </insert>
+    <insert id="putall">
+        insert into shopProduct (md_id, sp_id, putno, putdate,status, isdelete)
+        values (#{mdId}, #{spId}, #{putNo}, #{putDate},1, 0)
+    </insert>
+    <update id="pullProduct">
+        update shopproduct set status =2 where sp_id=#{spId} and md_id=#{mdId}
+    </update>
+    <update id="putProductBySpId">
+        update shopproduct set status =1 where sp_id=#{spId} and md_id=#{mdId}
+    </update>
+    <select id="getBySpId" resultType="com.example.supermarket.entity.vo.ShopProductVO">
+        select p.sp_Name        spName,
+               sp.sp_id         spId,
+               sp.md_id         mdId,
+               sum(sp.putno) putCount,
+               p.unit,
+               p.sp_price       spPrice,
+               p.sp_producedate spProduceDate,
+               sp.status,
+               p.sp_img         image
+        from shopproduct sp
+                 left join shop s
+                           on sp.md_id = s.md_id
+                 left join product p
+                           on sp.sp_id = p.sp_id
+        where s.isdelete = 0
+          and p.isdelete = 0
+          and sp.isdelete = 0
+          and sp.status= #{status}
+          and sp.md_id = #{mdId}
+        GROUP BY sp.sp_id
+    </select>
+</mapper>

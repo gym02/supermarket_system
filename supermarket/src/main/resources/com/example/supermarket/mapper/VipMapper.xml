@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.supermarket.mapper.VipMapper">
+
+    <!--删除选中的所有会员-->
+    <update id="removeAllVip" >
+        update vip set isdelete = 1 where hy_id in
+           <foreach collection="ids" item="id" open="(" close=")" separator=",">
+               #{id}
+           </foreach>
+    </update>
+
+    <!--根据搜索条件查询会员信息-->
+    <select id="searchVip" resultType="com.example.supermarket.entity.dto.VipSearchDTO">
+        select * from customer c , vip v where v.gk_id = c.gk_id and v.isdelete=0
+            <if test="hyId != null and hyId != '' ">
+                and v.hy_id = #{hyId}
+            </if>
+            <if test="hyName != null and hyName != '' ">
+                and v.hy_name = #{hyName}
+            </if>
+            <if test="gkEmail != null and gkEmail != '' ">
+                and c.gk_email = #{gkEmail}
+            </if>
+            <if test="hyBalance != null and hyBalance != '' ">
+                and v.hy_balance = #{hyBalance}
+            </if>
+            <if test="hyPoint != null and hyPoint != '' ">
+                and v.hy_point = #{hyPoint}
+            </if>
+        <if test="hyTotalPoint != null and hyTotalPoint != '' ">
+            and v.hy_totalpoint = #{hyTotalPoint}
+        </if>
+    </select>
+
+    <!--删除选中的所有充值记录-->
+    <update id="removeAllBalanceDetail" >
+        update vipbalance set isdelete = 1 where cz_id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--根据搜索条件查询充值记录信息-->
+    <select id="searchBalanceDetail" resultType="com.example.supermarket.entity.dto.VipBalanceSearchDTO">
+        select * from vipbalance where isdelete = 0
+        <if test="czId!=null and czId!='' ">
+            and cz_id = #{czId}
+        </if>
+        <if test="hyId!=null and hyId!='' ">
+            and hy_id = #{hyId}
+        </if>
+        <if test="hyName!=null and hyName!='' ">
+            and hy_name = #{hyName}
+        </if>
+        <if test="czAmount!=null and czAmount!='' ">
+            and cz_amount = #{czAmount}
+        </if>
+        <if test="czType!=null and czType!='' ">
+            and cz_type = #{czType}
+        </if>
+        <if test="czTimeArray!=null and czTimeArray[0]!=null and czTimeArray[1]!=null ">
+            and cz_time between #{czTimeArray[0]} and #{czTimeArray[1]}
+        </if>
+        <if test="czStatue!=null and czStatue!='' ">
+            and cz_statue = #{czStatue}
+        </if>
+    </select>
+
+    <!--更具换算率，重新计算会员剩余积分-->
+    <update id="dealAmoutPointRatio">
+        update vip set hy_point = hy_point/hy_discount*#{amountPointRatio} where isdelete = 0
+    </update>
+
+    <!--根据换算率，重新计算会员总积分-->
+    <update id="dealAmoutPointRatioTotal">
+        update vip set hy_totalpoint = hy_totalpoint/hy_discount*#{amountPointRatio} where isdelete = 0
+    </update>
+
+    <!--修改会员等级信息-->
+    <update id="updateVipLevel">
+        update viplevel set dj_name = #{djName},dj_discount = #{djDiscount}
+        <if test="djMin!=null and djMin!='' ">
+            ,dj_min = #{djMin}
+        </if>
+        <if test="djMax!=null and djMax!='' ">
+            ,dj_max = #{djMax}
+        </if>
+        where dj_id = #{djId}
+    </update>
+
+    <!--修改会员表中所有会员的等级-->
+    <update id="updateAllVipLevel">
+        update vip set hy_level = #{djId} ,hy_discount = #{djDiscount} where  hy_totalpoint between #{djMin} and #{djMax}
+    </update>
+
+    <!--修改会员表中所有会员的等级，如果max为Null-->
+    <update id="updateAllVipLevelIfNull">
+        update vip set hy_level = #{djId},hy_discount = #{djDiscount} where hy_totalpoint >= #{djMin}
+    </update>
+</mapper>

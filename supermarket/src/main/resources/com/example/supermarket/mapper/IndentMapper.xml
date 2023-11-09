@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.supermarket.mapper.IndentMapper">
+<select id="getAllIndent" resultMap="indentMapper">
+    select i.dd_id, i.dd_ordertime, i.dd_num, i.dd_paystatus, i.dd_payway, i.dd_yunfei, i.dd_delivertime,
+           i.dd_status, i.dd_type, i.dd_comment, i.gk_id, i.sp_id, i.sh_id,
+           p.sp_name, p.sp_price, i.dd_num, p.sp_img, p.zl_id, k.zl_name,
+           s.sh_name, a.xd_date, a.fk_date, a.fh_date, a.sh_date, a.wc_date
+           from indent i, product p, customer c, sendway s, kind k, aftersale a
+             where i.sp_id = p.sp_id
+               and i.gk_id = c.gk_id
+               and i.sh_id = s.sh_id
+               and p.zl_id = k.zl_id
+               and i.dd_id = a.dd_id
+               and i.isdelete = 0
+    <if test="ddId!=null and ddId!=''">
+        and i.dd_id like '%' #{ddId} '%'
+    </if>
+    <if test="spName!=null and spName!=''">
+        and p.sp_name like '%' #{spName} '%'
+    </if>
+    <if test="mjName!=null and mjName!=''">
+        and c.gk_name like '%' #{mjName} '%'
+    </if>
+    <if test="sendWay!=null and sendWay.shId!=null">
+        and s.sh_id = #{sendWay.shId}
+    </if>
+    <if test="ddStatus!=null and ddStatus!=''">
+        and i.dd_status = #{ddStatus}
+    </if>
+    <if test="from!=null">
+        and i.dd_ordertime >= #{from}
+    </if>
+    <if test="to!=null">
+        and i.dd_ordertime &lt;= #{to}
+    </if>
+</select>
+<resultMap id="indentMapper" type="com.example.supermarket.entity.vo.IndentVO">
+    <id column="dd_id" property="ddId"></id>
+    <result column="dd_num" property="ddNum"></result>
+    <result column="dd_payway" property="ddPayway"></result>
+    <result column="dd_ordertime" property="ddOrdertime"></result>
+    <result column="dd_type" property="ddType"></result>
+    <result column="dd_status" property="ddStatus"></result>
+    <result column="dd_comment" property="ddComment"></result>
+    <association property="productVO" javaType="com.example.supermarket.entity.vo.ProductVO" column="sp_id"
+                 select="selectAllProductBySpid">
+    </association>
+    <association property="kind" javaType="com.example.supermarket.entity.Kind" column="sp_id"
+                 select="selectAllKindBySpid">
+    </association>
+    <association property="sendWay" javaType="com.example.supermarket.entity.SendWay" column="sh_id"
+                 select="selectAllSendWayByShid">
+    </association>
+    <association property="customer" javaType="com.example.supermarket.entity.Customer" column="gk_id"
+                 select="selectAllCustomerByGkid">
+    </association>
+</resultMap>
+    <!--在product里绑定kind类
+    <select id="selectAllProductBySpid" resultMap="indentMapper1">
+        select * from product p, kind k
+                 where p.zl_id = k.zl_id
+                   and p.sp_id = #{spId}
+    </select>
+    <resultMap id="indentMapper1" type="com.example.supermarket.entity.vo.ProductVO">
+        <id column="sp_id" property="spId"></id>
+        <result column="sp_name" property="spName"></result>
+        <result column="sp_price" property="spPrice"></result>
+        <result column="sp_num" property="spNum"></result>
+        <result column="sp_image" property="spImage"></result>
+        <association property="kind" javaType="com.example.supermarket.entity.Kind" column="zl_id"
+                     select="selectAllKindByZlid">
+        </association>
+    </resultMap>-->
+
+    <select id="selectAllProductBySpid" resultType="com.example.supermarket.entity.vo.ProductVO">
+        select * from product where sp_id = #{spId}
+    </select>
+    <select id="selectAllSendWayByShid" resultType="com.example.supermarket.entity.SendWay">
+        select * from sendway where sh_id = #{shId}
+    </select>
+    <select id="selectAllCustomerByGkid" resultType="com.example.supermarket.entity.Customer">
+        select * from customer where gk_id = #{gkId}
+    </select>
+    <select id="selectAllKindBySpid" resultType="com.example.supermarket.entity.Kind">
+        select * from kind K, product p where p.zl_id = k.zl_id and p.sp_id = #{spId}
+    </select>
+
+</mapper>

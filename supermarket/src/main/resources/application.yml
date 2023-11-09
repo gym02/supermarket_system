@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #数据库
+    url: jdbc:mysql://localhost:3306/supermarket_system
+    username: root
+    password: 123
+  redis:
+    host: 192.168.159.166
+    port: 6379
+    password: 123
+    database: 1
+    lettuce:
+      pool:
+        max-wait: -1  # 最长等待时间
+        min-idle: 2   # 最小连接数
+        max-idle: 10   # 最da连接数
+        max-active: 5 # 最大活动数
+  rabbitmq:
+    host: 192.168.159.166
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual      #消费者手动确认
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.example.supermarket.entity
+server:
+  port: 8080
+
+example:
+  file-path: D://shopImages
+woniu:
+  file-path: c:/temp

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间：对应的接口的全类名-->
+<mapper namespace="com.example.supermarket.mapper.VipExchangeMapper">
+    <!--id和对应的mapper接口中的方法名一样-->
+    <select id="search" resultType="com.example.supermarket.entity.dto.VipExchangeSearchDTO">
+        select * from vipexchange vc,vipindent vi,vip v,customer c where vc.hy_id = v.hy_id and vc.vi_id = vi.vi_id
+        and v.gk_id = c.gk_id
+        <if test="viId!=null and viId!='' ">
+            and vc.vi_id = #{viId}
+        </if>
+        <if test="viName!=null and viName!='' ">
+            and vi.vi_name = #{viName}
+        </if>
+        <if test="hyId!=null and hyId!='' ">
+            and vc.hy_id = #{hyId}
+        </if>
+        <if test="hyName!=null and hyName!='' ">
+            and v.hy_name = #{hyName}
+        </if>
+        <if test="gkEmail!=null and gkEmail!='' ">
+            and c.gk_email = #{gkEmail}
+        </if>
+        <if test="dhTime!=null and dhTime!='' ">
+            and dh_time = #{dhTime}
+        </if>
+            and vc.isdelete = 0
+     </select>
+</mapper>

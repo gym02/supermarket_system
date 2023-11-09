@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.supermarket.mapper.RoleMapper">
+    <select id="selectAllRoles" resultType="com.example.supermarket.entity.Role">
+        select * from role
+    </select>
+    <insert id="addRole">
+        insert into role values (null,#{rname},0)
+    </insert>
+
+    <select id="selectMenusByRid" resultType="com.example.supermarket.entity.Menu">
+        select * from menu m, role r,rolemenu rm
+            where rm.mid=m.mid and rm.rid=r.rid and r.rid=#{rid}
+    </select>
+
+    <update id="deleteMenusByRid">
+        update rolemenu set isdelete = 1 where rid=#{rid}
+    </update>
+
+    <insert id="insertMenusByRid">
+        insert into rolemenu values
+        <foreach collection="mids" item="mid" separator=",">
+            (null,#{rid},#{mid},0)
+        </foreach>
+    </insert>
+    <select id="selectRolesByPid" resultType="com.example.supermarket.entity.Role">
+        select * from permission p, role r,rolepermission rp
+            where rp.pid=p.pid and rp.rid=r.rid and p.pid=#{pid}
+    </select>
+    <select id="selectRolesByMid" resultType="com.example.supermarket.entity.Role">
+        select * from menu m, role r,rolemenu rm
+            where rm.mid=m.mid and rm.rid=r.rid and m.mid=#{mid}
+    </select>
+
+    <select id="selectPermissionsByRid" resultType="com.example.supermarket.entity.Permission">
+        select * from permission p, role r,rolepermission rp
+            where rp.pid=p.pid and rp.rid=r.rid and r.rid=#{rid}
+    </select>
+
+    <update id="deletePermissionsByRid">
+        update rolepermission set isdelete = 1 where rid=#{rid}
+    </update>
+
+    <insert id="insertPermissionsByRid">
+        insert into rolepermission values
+        <foreach collection="pids" item="pid" separator=",">
+            (null,#{rid},#{pid},0)
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.supermarket.mapper.SupplyMapper">
+    <insert id="add">
+        insert into supply (su_name,su_contactor,su_phone,isdelete) values (#{suName},#{suContactor},#{suPhone},0)
+    </insert>
+    <update id="editSupply">
+        update supply set su_name=#{suName},su_contactor=#{suContactor},su_phone=#{suPhone} where su_id=#{suId}
+    </update>
+    <update id="deleteBySuId">
+        update supply set isdelete=1 where su_id=#{suId}
+    </update>
+    <update id="removeAll">
+        update  supply set isdelete =1 where su_id in
+        <foreach collection="suIds" item="suId" open="(" separator="," close=")">
+            #{suId}
+        </foreach>
+    </update>
+
+    <select id="getByCondition" resultType="com.example.supermarket.entity.Supply">
+        select su_id suId,su_name suName,su_contactor suContactor,su_phone suPhone , isdelete from supply where isdelete =0
+        <if test="suName!=null and suName!=''">
+            and su_name like '%${suName}%'
+        </if>
+        <if test="suContactor!=null and suContactor!=''">
+            and su_contactor like '%${suContactor}%'
+        </if>
+        <if test="suPhone!=null and suPhone!=''">
+            and su_phone  like '%${suPhone}%'
+        </if>
+    </select>
+    <select id="getAllSupplies" resultType="com.example.supermarket.entity.Supply">
+        select su_id suId,su_name suName,su_contactor suContactor,su_phone suPhone , isdelete from supply where isdelete =0
+    </select>
+</mapper>
